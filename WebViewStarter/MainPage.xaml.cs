@@ -48,6 +48,7 @@ namespace WebViewStarter
 
         }
 
+        // wait for the webview to load
         async void InitializeAsync(object sender, RoutedEventArgs e)
         {
             await WebView2.EnsureCoreWebView2Async();

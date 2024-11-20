@@ -37,3 +37,51 @@ MainPage.xaml
     </Grid>
 </Page>
 ```
+
+In MainPage.xaml.cs
+
+1) Wait for the webview to fully load 
+
+
+```c#
+
+        public MainPage()
+        {
+            this.InitializeComponent();
+            this.Loaded += InitializeAsync;
+        }
+
+      // wait for the webview to load
+        async void InitializeAsync(object sender, RoutedEventArgs e)
+        {
+            await WebView2.EnsureCoreWebView2Async();
+            WebView2.CoreWebView2.Settings.AreDevToolsEnabled = false;
+            AppWindowLoaded();
+        }
+
+
+
+```
+
+2) Mount the html app onto webview 
+
+
+```c#
+ private void AppWindowLoaded()
+        {
+            var appDir = AppDomain.CurrentDomain.BaseDirectory;
+            Debug.WriteLine(appDir);
+            var frontendPath = System.IO.Path.Combine(appDir, "frontend");
+
+            if (!Directory.Exists(frontendPath))
+            {
+                Debug.WriteLine("Frontend directory does not exist.", "ERROR");
+                return;
+            };
+            WebView2.CoreWebView2.SetVirtualHostNameToFolderMapping("appassets.example", frontendPath, CoreWebView2HostResourceAccessKind.Allow);
+            var source = new Uri("https://appassets.example/index.html");
+            WebView2.Source = new Uri(source.ToString());
+
+        }
+
+```
